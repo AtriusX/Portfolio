@@ -44,12 +44,12 @@ function VectorAnimation<T>({ setup, update, dimension, frames, ...rest }: Vecto
         const move: Move = ({ clientX, clientY }) => setMouse([clientX, clientY])
         const reset = () => setMouse([-10000, -10000])
         window.addEventListener('mousemove', move)
-        window.addEventListener('mouseleave', reset)
+        window.addEventListener('mouseout', reset)
         let interval = setInterval(() => setFrame(frame + 1), 1000 / (frames ?? 60))
         return () => {
             clearInterval(interval)
             window.removeEventListener('mousemove', move)
-            window.removeEventListener('mouseleave', reset)
+            window.removeEventListener('mouseout', reset)
         }
     }, [frame, frames])
     return (
