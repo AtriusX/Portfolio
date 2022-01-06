@@ -92,7 +92,6 @@ const Home: NextPage = () => {
         width='100%'
         height='100%'
         preserveAspectRatio="none"
-        frames={30}
       />
       <div
         style={{
