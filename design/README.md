@@ -21,3 +21,6 @@ A couple initial angles could be to somehow incorporate my previous brand color 
 A compromise approach may be to use alternative color sets for both dark and light themes. This could allow me to specify a light theme with a relevant identity, while also allowing me to preserve previous colors in the dark theme.
 
 ## Style
+
+The overall portfolio style should focus on simplicity, however it should also attempt to be as lively as possible by taking advantage of animations when applicable. Mobile friendliness may require that some or all of these animations are muted for non-desktop devices, or at least for phones.
+
