@@ -38,8 +38,6 @@ const Home: NextPage = () => {
     ({ state, mouse: [x, y], frame, client: [width, height], view: { scroll: [scroll] } }) => {
       // let sX = x * (WIDTH / width)
       // let sY = (y + (typeof window !== 'undefined' ? scrollY : 0)) * (HEIGHT / height)
-      console.log("TEST UPDATE");
-
       return <g>
         {state.map(({ x, y }, i) => {
           let wave = Math.sin((-frame / 4 + x) / 4);
