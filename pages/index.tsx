@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import React from "react";
+import React, { useCallback } from "react";
 import VectorAnimation, { VectorAnimationProps } from "../components/VectorAnimation";
 
 function clamp(value: number, low: number, high: number): number {
@@ -16,57 +16,63 @@ interface Square {
   y: number;
 }
 
-const COUNT = 24,
-  STACK = 12,
+const COUNT = 16,
+  STACK = 16,
   SIZE = 10,
   WIDTH = COUNT * SIZE,
   HEIGHT = STACK * SIZE;
 
 const Home: NextPage = () => {
-  const setup = () => {
-    let out: Square[] = [];
-    for (let i = 0; i < COUNT; i++)
-      for (let j = 0; j < STACK; j++)
-        out.push({ x: i, y: j });
-    return out;
-  }
+  const setup = useCallback(
+    () => {
+      console.log("TEST")
+      let out: Square[] = [];
+      for (let i = 0; i < COUNT; i++)
+        for (let j = 0; j < STACK; j++)
+          out.push({ x: i, y: j });
+      return out;
+    }, []
+  )
 
-  const update: VectorAnimationProps<Square[]>["update"] = (
-    { state, mouse: [x, y], frame, client: [width, height] }
-  ) => {
-    let sX = x * (WIDTH / width)
-    let sY = y * (HEIGHT / height)
-    return <g>
-      {state.map(({ x, y }, i) => {
-        let wave = Math.sin((-frame / 4 + x) / 4);
-        let dist = distance(sX, sY, x * SIZE + SIZE / 2, y * SIZE + SIZE / 2)
-        let pad = ((2 * wave) / (STACK - y) / 2)
-        if (dist < 10000)
-          pad *= clamp(2500 / dist, 0, 8)
-        return (
-          <rect
-            key={i}
-            x={x * SIZE + Math.abs(pad / 2)}
-            y={y * SIZE + y * wave * 2 + wave * -2 * y + Math.abs(pad / 2)}
-            width={SIZE - Math.abs(pad)}
-            height={SIZE - Math.abs(pad)}
-            style={{
-              strokeWidth: Math.abs(
-                clamp(
-                  Math.sin(
-                    frame / 128 + (((x & y) ^ ~x) % Number.MAX_VALUE)
-                  ) - clamp(pad / 16, 0, 0.2),
-                  0,
-                  0.2
-                )
-              ),
-              stroke: `hsl(${300 + wave * 100}, 100%, 25%)`,
-            }}
-          />
-        );
-      })}
-    </g>
-  }
+  const update: VectorAnimationProps<Square[]>["update"] = useCallback(
+    ({ state, mouse: [x, y], frame, client: [width, height], view: { scroll: [scroll] } }) => {
+      // let sX = x * (WIDTH / width)
+      // let sY = (y + (typeof window !== 'undefined' ? scrollY : 0)) * (HEIGHT / height)
+      console.log("TEST UPDATE");
+
+      return <g>
+        {state.map(({ x, y }, i) => {
+          let wave = Math.sin((-frame / 4 + x) / 4);
+          // let dist = distance(sX, sY, x * SIZE + SIZE / 2, y * SIZE + SIZE / 2)
+          let pad = ((2 * wave) / Math.log10(STACK - Math.abs(y - STACK / 2))) + clamp((scroll - y * 10) / 30, 0, 8)
+          // if (dist < 10000 && pad < 2)
+          //   pad *= clamp(2500 / dist, 0, 8)
+          return (
+            <rect
+              key={i}
+              x={x * SIZE + Math.abs(pad / 2)}
+              y={y * SIZE + y * wave * 2 + wave * -2 * y + Math.abs(pad / 2)}
+              width={SIZE - Math.abs(pad)}
+              height={SIZE - Math.abs(pad)}
+              style={{
+                strokeWidth: Math.abs(
+                  clamp(
+                    Math.sin(
+                      frame / 128 + (((x & y) ^ ~x) % Number.MAX_VALUE)
+                    ) - clamp(pad / 16, 0, 0.2),
+                    0,
+                    0.2
+                  )
+                ),
+                stroke: `hsl(${300 + wave * 100}, 100%, 25%)`,
+              }}
+            />
+          );
+        })}
+      </g>
+    }, []
+  )
+
   return (
     <div
       style={{
@@ -105,9 +111,12 @@ const Home: NextPage = () => {
         }}
       >
         <h1 style={{
-          textShadow: '0 0 4px black'
+          textShadow: '0 0 10px black'
         }}>Landing Page</h1>
       </div>
+      <div style={{
+        height: '110vh'
+      }}></div>
     </div>
   )
 }
